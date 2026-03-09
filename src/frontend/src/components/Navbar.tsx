@@ -9,7 +9,6 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { ChevronDown, LogOut, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { ConnectModal } from "./ConnectModal";
 
 const navLinks = [
   { label: "Registry", href: "/registry", ocid: "nav.link.1" },
@@ -143,10 +142,14 @@ function JoinButton({
   );
 }
 
-export function Navbar() {
+interface NavbarProps {
+  onOpenConnect?: () => void;
+  onOpenPostModal?: () => void;
+}
+
+export function Navbar({ onOpenConnect, onOpenPostModal }: NavbarProps) {
   const { user, isConnected, disconnect } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [connectOpen, setConnectOpen] = useState(false);
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
 
@@ -269,6 +272,14 @@ export function Navbar() {
                   }}
                 >
                   <DropdownMenuItem
+                    onClick={() => onOpenPostModal?.()}
+                    className="cursor-pointer gap-2"
+                    data-ocid="nav.post_project_button"
+                    style={{ color: "#9CA3AF" }}
+                  >
+                    Post Project
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={disconnect}
                     className="cursor-pointer gap-2"
                     data-ocid="nav.disconnect_button"
@@ -284,7 +295,13 @@ export function Navbar() {
               <div className="hidden md:block">
                 <JoinButton
                   ocid="nav.join_button"
-                  onClick={() => setConnectOpen(true)}
+                  onClick={() => {
+                    if (isConnected) {
+                      onOpenPostModal?.();
+                    } else {
+                      onOpenConnect?.();
+                    }
+                  }}
                 />
               </div>
             )}
@@ -384,7 +401,7 @@ export function Navbar() {
                     ocid="nav.connect_button"
                     fullWidth
                     onClick={() => {
-                      setConnectOpen(true);
+                      onOpenConnect?.();
                       setMobileOpen(false);
                     }}
                   />
@@ -394,8 +411,6 @@ export function Navbar() {
           </div>
         )}
       </header>
-
-      <ConnectModal open={connectOpen} onOpenChange={setConnectOpen} />
     </>
   );
 }

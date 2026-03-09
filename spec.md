@@ -1,42 +1,39 @@
-# HalfBuilt
+# HalfBuilt Registry
 
 ## Current State
-New project — no existing code.
+- Full multi-page app with Home, Registry, Submit, ProjectView, About pages
+- Obsidian Glass design system in place with Electric Indigo (#4F46E5) accents
+- Registry page has a vacuum state (zero-project) with an "INITIALIZE FIRST REPOSITORY" button that currently links to `/submit` page
+- Navbar has a "Join the Brotherhood" button that opens ConnectModal (auth)
+- Submit page is a full standalone page at `/submit`
+- Backend supports `submitProject` via `actor.submitProject(...)`
+- Auth via AuthContext (GitHub-based)
 
 ## Requested Changes (Diff)
 
 ### Add
-- Full multi-page React application with 4 routes: `/`, `/submit`, `/project/:id`, `/about`
-- Motoko backend with User, Project, and Proposal data models
-- GitHub username-based auth (local state, no OAuth redirect)
-- Impact Ticker showing live stats from backend
-- Responsive project feed grid (approved projects only)
-- Project submission form with multi-tag tech stack input
-- Project detail view with Handover Proposal modal
-- Manifesto page (text-focused, static content)
-- Mobile-first responsive nav with hamburger menu
+- `PostProjectModal` component: a centered `.obsidian-glass` overlay modal triggered from two entry points
+  - Overlay: `rgba(5,5,5,0.9)` background with `blur(30px)`
+  - Card: `max-width: 650px`, `width: 90%`, border pulses Electric Indigo on hover
+  - 4 form fields with monospace labels (`> PROJECT_ID`, `> THE_SOUL (ONE LINER)`, `> CURRENT_STATUS (THE HALF-BUILT TRUTH)`, `> SOURCE_LINK`)
+  - Each field: transparent background, white bottom border only
+  - Genesis toggle: "Claim Genesis Status (Remaining: XX/100)" — when checked, subtle indigo glow spreads behind the modal
+  - Execute button: `[ EXECUTE_INITIALIZATION ]` — solid Electric Indigo, animated loading bar showing UPLOADING_GENIUS... 45%... 89%... DONE
+  - ESC key and `[ esc_to_cancel ]` corner text to close
+- State management: `postModalOpen` boolean state shared between Navbar and Registry via a global/lifted approach (or component prop drilling)
 
 ### Modify
-N/A
+- `Registry.tsx`: `InitializeButton` — remove `<Link to="/submit">` wrapper, instead call `onOpenModal()` callback to open PostProjectModal. Accept `onOpenModal` prop.
+- `Navbar.tsx`: `JoinButton` — when user is already authenticated, clicking "Join the Brotherhood" opens PostProjectModal instead of ConnectModal
+- `App.tsx`: Lift `postModalOpen` state at root layout level, pass open/close handlers down to Navbar and Registry via context or props
 
 ### Remove
-N/A
+- Direct navigation from "INITIALIZE FIRST REPOSITORY" to `/submit` page (replaced by modal)
 
 ## Implementation Plan
-
-### Backend (Motoko)
-- `User` record: `github_id`, `github_username`, `github_avatar_url`, `created_at`
-- `Project` record: `id`, `title`, `repo_url`, `tech_stack` (array), `handover_type`, `pitch`, `status` (variant: pending/approved/adopted), `submitter_github_id`, `created_at`
-- `Proposal` record: `id`, `project_id`, `proposer_github_id`, `message`, `created_at`
-- Mutations: `connectUser(github_id, username, avatar_url)`, `submitProject(...)`, `submitProposal(...)`, `updateProjectStatus(id, status)` (admin)
-- Queries: `getApprovedProjects()`, `getAllProjects()`, `getProjectById(id)`, `getStats()` → `{listed, in_audit, adopted}`
-
-### Frontend
-1. **Auth context** — GitHub username connect flow; stores `{github_id, github_username, github_avatar_url}` in localStorage and React context. Modal prompt for connect.
-2. **Navigation** — Logo "HalfBuilt", links Registry/Submit/About, Connect GitHub button; hamburger collapse on mobile.
-3. **Home (`/`)** — Hero headline, subheadline, Impact Ticker (live stats), project feed grid with empty state.
-4. **Project cards** — Title, tech stack tags, handover type badge, pitch excerpt, "View Project" CTA.
-5. **Submit (`/submit`)** — Auth gate, form (title, repo URL, tech stack multi-tag, handover type select, pitch textarea), submit to backend, success state.
-6. **Project View (`/project/:id`)** — Full details, submitter info, "Request Handover" button, proposal modal with auth gate.
-7. **About (`/about`)** — Manifesto text layout.
-8. **Routing** — React Router for all pages.
+1. Create `PostProjectModal.tsx` component with all overlay physics, form fields, Genesis toggle, animated execute button, and ESC close behavior
+2. Add a `PostProjectModalContext` (or lift state in `App.tsx` RootLayout) to share modal open state between Navbar and Registry
+3. Modify `Registry.tsx` — wire InitializeButton to open the post modal
+4. Modify `Navbar.tsx` — when authenticated user clicks "Join the Brotherhood", open PostProjectModal instead of ConnectModal
+5. Wire submit logic to existing `useSubmitProject` mutation
+6. Validate and deploy

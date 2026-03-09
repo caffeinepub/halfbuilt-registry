@@ -1,8 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { ProjectCard } from "../components/ProjectCard";
+import { usePostModal } from "../context/PostModalContext";
 import { useApprovedProjects } from "../hooks/useQueries";
 
 /* ── Inline keyframe for the plus glow pulse ─────────────────────────────── */
@@ -100,39 +100,39 @@ function GhostCard({ rotate = 0 }: { rotate?: number }) {
 /* ── Initialize CTA Button ───────────────────────────────────────────────── */
 function InitializeButton() {
   const [hovered, setHovered] = useState(false);
+  const { openPostModal } = usePostModal();
 
   return (
-    <Link to="/submit">
-      <button
-        type="button"
-        data-ocid="registry.initialize_button"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          fontFamily: "'Geist Mono', ui-monospace, monospace",
-          color: "#F3F4F6",
-          padding: "16px 32px",
-          borderRadius: "6px",
-          fontSize: "14px",
-          letterSpacing: "0.1em",
-          cursor: "pointer",
-          background: "rgba(10, 10, 11, 0.7)",
-          backdropFilter: "blur(20px) saturate(160%)",
-          WebkitBackdropFilter: "blur(20px) saturate(160%)",
-          border: hovered
-            ? "1px solid #4F46E5"
-            : "1px solid rgba(255,255,255,0.08)",
-          boxShadow: hovered
-            ? "0 8px 32px 0 rgba(0,0,0,0.8), 0 0 20px rgba(79,70,229,0.3)"
-            : "0 8px 32px 0 rgba(0,0,0,0.8)",
-          transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-          display: "inline-block",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {hovered ? "LEAVE YOUR MARK, BOSS." : "[ INITIALIZE FIRST REPOSITORY ]"}
-      </button>
-    </Link>
+    <button
+      type="button"
+      data-ocid="registry.initialize_button"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => openPostModal()}
+      style={{
+        fontFamily: "'Geist Mono', ui-monospace, monospace",
+        color: "#F3F4F6",
+        padding: "16px 32px",
+        borderRadius: "6px",
+        fontSize: "14px",
+        letterSpacing: "0.1em",
+        cursor: "pointer",
+        background: "rgba(10, 10, 11, 0.7)",
+        backdropFilter: "blur(20px) saturate(160%)",
+        WebkitBackdropFilter: "blur(20px) saturate(160%)",
+        border: hovered
+          ? "1px solid #4F46E5"
+          : "1px solid rgba(255,255,255,0.08)",
+        boxShadow: hovered
+          ? "0 8px 32px 0 rgba(0,0,0,0.8), 0 0 20px rgba(79,70,229,0.3)"
+          : "0 8px 32px 0 rgba(0,0,0,0.8)",
+        transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+        display: "inline-block",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {hovered ? "LEAVE YOUR MARK, BOSS." : "[ INITIALIZE FIRST REPOSITORY ]"}
+    </button>
   );
 }
 

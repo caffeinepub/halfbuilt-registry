@@ -6,8 +6,12 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import { useState } from "react";
+import { ConnectModal } from "./components/ConnectModal";
 import { Navbar } from "./components/Navbar";
+import { PostProjectModal } from "./components/PostProjectModal";
 import { AuthProvider } from "./context/AuthContext";
+import { PostModalProvider, usePostModal } from "./context/PostModalContext";
 import { About } from "./pages/About";
 import { Home } from "./pages/Home";
 import { ProjectView } from "./pages/ProjectView";
@@ -17,8 +21,22 @@ import { Submit } from "./pages/Submit";
 // Root layout with shared Navbar
 function RootLayout() {
   return (
+    <PostModalProvider>
+      <RootLayoutInner />
+    </PostModalProvider>
+  );
+}
+
+function RootLayoutInner() {
+  const [connectOpen, setConnectOpen] = useState(false);
+  const { postModalOpen, setPostModalOpen, openPostModal } = usePostModal();
+
+  return (
     <>
-      <Navbar />
+      <Navbar
+        onOpenConnect={() => setConnectOpen(true)}
+        onOpenPostModal={openPostModal}
+      />
       <Outlet />
       <Toaster
         theme="dark"
@@ -30,6 +48,12 @@ function RootLayout() {
             description: "text-zinc-400",
           },
         }}
+      />
+      <ConnectModal open={connectOpen} onOpenChange={setConnectOpen} />
+      <PostProjectModal
+        open={postModalOpen}
+        onOpenChange={setPostModalOpen}
+        onRequestAuth={() => setConnectOpen(true)}
       />
     </>
   );
