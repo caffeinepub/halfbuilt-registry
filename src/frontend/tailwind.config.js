@@ -66,7 +66,14 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        // HalfBuilt semantic tokens
+        // HalfBuilt Obsidian Glass — exact hex tokens
+        "electric-indigo": "#4F46E5",
+        "cyber-mint": "#10B981",
+        "obsidian-void": "#050505",
+        "glass-base": "rgba(10, 10, 11, 0.7)",
+        "text-crisp": "#F3F4F6",
+        "text-dim": "#9CA3AF",
+        // Extended indigo scale
         indigo: {
           50: "#eef2ff",
           100: "#e0e7ff",
@@ -80,31 +87,26 @@ export default {
           900: "#312e81",
           950: "#1e1b4b",
         },
-        zinc: {
-          50: "#fafafa",
-          100: "#f4f4f5",
-          200: "#e4e4e7",
-          300: "#d4d4d8",
-          400: "#a1a1aa",
-          500: "#71717a",
-          600: "#52525b",
-          700: "#3f3f46",
-          800: "#27272a",
-          900: "#18181b",
-          950: "#09090b",
+        emerald: {
+          400: "#34d399",
+          500: "#10b981",
         },
         amber: {
           400: "#fbbf24",
           500: "#f59e0b",
         },
-        emerald: {
-          400: "#34d399",
-          500: "#10b981",
-        },
       },
       fontFamily: {
-        sans: ["Mona Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["Geist Mono", "ui-monospace", "monospace"],
+      },
+      letterSpacing: {
+        tighter: "-0.03em",
+        tight: "-0.02em",   // high-end heading default
+        normal: "0em",
+        wide: "0.025em",
+        wider: "0.05em",
+        widest: "0.1em",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -115,9 +117,17 @@ export default {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        "indigo-glow": "0 0 20px rgba(99, 102, 241, 0.15)",
-        "indigo-glow-lg": "0 0 40px rgba(99, 102, 241, 0.25)",
-        "indigo-glow-sm": "0 0 10px rgba(99, 102, 241, 0.1)",
+        // Obsidian Glass elevation
+        "glass": "0 8px 32px 0 rgba(0,0,0,0.8)",
+        "glass-lg": "0 16px 48px 0 rgba(0,0,0,0.9)",
+        // Electric Indigo glows
+        "indigo-glow": "0 0 20px rgba(79,70,229,0.2)",
+        "indigo-glow-md": "0 0 30px rgba(79,70,229,0.35)",
+        "indigo-glow-lg": "0 0 40px rgba(79,70,229,0.5)",
+        "indigo-glow-sm": "0 0 10px rgba(79,70,229,0.15)",
+        // Cyber Mint glow
+        "mint-glow": "0 0 16px rgba(16,185,129,0.25)",
+        "mint-glow-lg": "0 0 30px rgba(16,185,129,0.4)",
       },
       keyframes: {
         "accordion-down": {
@@ -140,6 +150,18 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        // Obsidian Breathing — Electric Indigo
+        "glow-pulse": {
+          "0%":   { boxShadow: "0 0 5px rgba(79, 70, 229, 0.2)" },
+          "50%":  { boxShadow: "0 0 20px rgba(79, 70, 229, 0.5)" },
+          "100%": { boxShadow: "0 0 5px rgba(79, 70, 229, 0.2)" },
+        },
+        // Mint breathing for 'Invested' alerts
+        "mint-pulse": {
+          "0%":   { boxShadow: "0 0 5px rgba(16, 185, 129, 0.2)" },
+          "50%":  { boxShadow: "0 0 16px rgba(16, 185, 129, 0.5)" },
+          "100%": { boxShadow: "0 0 5px rgba(16, 185, 129, 0.2)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -147,6 +169,8 @@ export default {
         "fade-in-up": "fade-in-up 0.6s ease-out forwards",
         "fade-in": "fade-in 0.4s ease-out forwards",
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "mint-pulse": "mint-pulse 3s ease-in-out infinite",
       },
     },
   },

@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Fonts ──────────────────────────────────────────────────── */
 @font-face {
-  font-family: "Mona Sans";
-  src: url("/assets/fonts/MonaSans.woff2") format("woff2");
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -18,67 +19,76 @@
   font-display: swap;
 }
 
+/* ─── Design Tokens ──────────────────────────────────────────── */
 @layer base {
   :root {
     --radius: 0.75rem;
 
-    /* HalfBuilt Dark Theme — Obsidian + Electric Indigo */
-    --background: 0.06 0 0;
-    --foreground: 0.97 0 0;
+    /* === Obsidian Glass Palette === */
 
-    /* Cards — very subtle dark glass */
-    --card: 0.09 0.004 264;
-    --card-foreground: 0.97 0 0;
+    /* Background Deep: #050505 → oklch ≈ 0.04 0 0 */
+    --background: 0.04 0 0;
+    --foreground: 0.965 0.003 264;
+
+    /* Cards — Glass Base: rgba(10,10,11,0.7) → dark charcoal */
+    --card: 0.08 0.004 264;
+    --card-foreground: 0.965 0.003 264;
 
     /* Popover */
-    --popover: 0.1 0.006 264;
-    --popover-foreground: 0.97 0 0;
+    --popover: 0.09 0.005 264;
+    --popover-foreground: 0.965 0.003 264;
 
-    /* Primary — Electric Indigo #6366F1 */
-    --primary: 0.558 0.228 264.376;
-    --primary-foreground: 0.97 0 0;
+    /* Primary — Electric Indigo: #4F46E5 → oklch ≈ 0.52 0.245 264 */
+    --primary: 0.52 0.245 264;
+    --primary-foreground: 0.965 0 0;
 
-    /* Secondary — subtle dark */
-    --secondary: 0.13 0.008 264;
-    --secondary-foreground: 0.85 0 0;
+    /* Secondary — deep obsidian tint */
+    --secondary: 0.11 0.006 264;
+    --secondary-foreground: 0.82 0.008 264;
 
     /* Muted */
-    --muted: 0.13 0.006 264;
-    --muted-foreground: 0.5 0 0;
+    --muted: 0.11 0.005 264;
+    /* Muted foreground: #9CA3AF → oklch ≈ 0.68 0.006 264 */
+    --muted-foreground: 0.68 0.006 264;
 
-    /* Accent — indigo tint */
-    --accent: 0.16 0.01 264;
-    --accent-foreground: 0.97 0 0;
+    /* Accent */
+    --accent: 0.14 0.008 264;
+    --accent-foreground: 0.965 0.003 264;
 
     /* Destructive */
     --destructive: 0.577 0.245 27.325;
-    --destructive-foreground: 0.97 0 0;
+    --destructive-foreground: 0.965 0 0;
 
-    /* Borders */
+    /* Borders — barely-there white veil */
     --border: 0.97 0 0 / 8%;
     --input: 0.97 0 0 / 10%;
-    --ring: 0.558 0.228 264.376;
+    --ring: 0.52 0.245 264;
 
     /* Charts */
-    --chart-1: 0.558 0.228 264.376;
-    --chart-2: 0.696 0.17 162.48;
-    --chart-3: 0.769 0.188 70.08;
-    --chart-4: 0.627 0.265 303.9;
-    --chart-5: 0.645 0.246 16.439;
+    --chart-1: 0.52 0.245 264;
+    /* Cyber Mint: #10B981 → oklch ≈ 0.696 0.17 162 */
+    --chart-2: 0.696 0.17 162;
+    --chart-3: 0.769 0.188 70;
+    --chart-4: 0.627 0.265 304;
+    --chart-5: 0.645 0.246 16;
 
     /* Sidebar */
-    --sidebar: 0.09 0.004 264;
-    --sidebar-foreground: 0.97 0 0;
-    --sidebar-primary: 0.558 0.228 264.376;
-    --sidebar-primary-foreground: 0.97 0 0;
-    --sidebar-accent: 0.13 0.008 264;
-    --sidebar-accent-foreground: 0.85 0 0;
+    --sidebar: 0.08 0.004 264;
+    --sidebar-foreground: 0.965 0.003 264;
+    --sidebar-primary: 0.52 0.245 264;
+    --sidebar-primary-foreground: 0.965 0 0;
+    --sidebar-accent: 0.11 0.006 264;
+    --sidebar-accent-foreground: 0.82 0.008 264;
     --sidebar-border: 0.97 0 0 / 8%;
-    --sidebar-ring: 0.558 0.228 264.376;
+    --sidebar-ring: 0.52 0.245 264;
 
-    /* Custom accent variable */
-    --accent-indigo: #6366f1;
-    --accent-indigo-glow: rgba(99, 102, 241, 0.15);
+    /* Raw hex aliases for components that can't use oklch */
+    --color-background: #050505;
+    --color-glass-base: rgba(10, 10, 11, 0.7);
+    --color-electric-indigo: #4F46E5;
+    --color-cyber-mint: #10B981;
+    --color-text-primary: #F3F4F6;
+    --color-text-muted: #9CA3AF;
   }
 
   * {
@@ -91,40 +101,95 @@
 
   body {
     @apply bg-background text-foreground;
-    background-color: #0a0a0b;
-    font-family: "Mona Sans", ui-sans-serif, system-ui, sans-serif;
+    background-color: #050505;
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Heading typography — tight tracking for high-end tech feel */
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    color: #F3F4F6;
+  }
 }
 
+/* ─── Obsidian Glass Material ────────────────────────────────── */
+@layer components {
+  .obsidian-glass {
+    background: rgba(10, 10, 11, 0.7);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+  }
+
+  .obsidian-glass-hover {
+    background: rgba(10, 10, 11, 0.7);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .obsidian-glass-hover:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 20px rgba(79, 70, 229, 0.2);
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
 @layer utilities {
   .font-mono-code {
     font-family: "Geist Mono", ui-monospace, monospace;
   }
 
-  .glow-indigo {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
-  }
-
-  .glow-indigo-sm {
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.1);
-  }
-
+  /* Legacy card-glass — kept for backwards compat, prefer .obsidian-glass */
   .card-glass {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(10, 10, 11, 0.7);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
     border-radius: 0.75rem;
   }
 
   .card-glass:hover {
-    border-color: rgba(99, 102, 241, 0.4);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+    border-color: rgba(79, 70, 229, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8), 0 0 20px rgba(79, 70, 229, 0.2);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 20px rgba(79, 70, 229, 0.2);
+  }
+
+  .glow-indigo-sm {
+    box-shadow: 0 0 10px rgba(79, 70, 229, 0.15);
+  }
+
+  .glow-mint {
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
   }
 
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Breathing indigo glow on an element */
+  .animate-glow-pulse {
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+}
+
+/* ─── Keyframes ──────────────────────────────────────────────── */
+
+/* Obsidian Breathing — Electric Indigo pulse */
+@keyframes glowPulse {
+  0%   { box-shadow: 0 0 5px rgba(79, 70, 229, 0.2); }
+  50%  { box-shadow: 0 0 20px rgba(79, 70, 229, 0.5); }
+  100% { box-shadow: 0 0 5px rgba(79, 70, 229, 0.2); }
 }
 
 /* Animated glow blob for hero */
@@ -149,13 +214,13 @@
 
 /* Ticker marquee */
 @keyframes ticker-scroll {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 /* Stat shimmer — sweeps once on load */
 @keyframes stat-shimmer {
-  0% { opacity: 0; transform: translateY(6px); }
+  0%   { opacity: 0; transform: translateY(6px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
@@ -163,7 +228,7 @@
   animation: stat-shimmer 0.5s ease-out forwards;
 }
 
-/* Card hover action strip slide */
+/* Card action strip slide */
 @keyframes strip-slide {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -179,7 +244,7 @@
 
 /* Focus ring */
 :focus-visible {
-  outline: 2px solid rgba(99, 102, 241, 0.8);
+  outline: 2px solid rgba(79, 70, 229, 0.8);
   outline-offset: 2px;
 }
 
@@ -192,9 +257,9 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.4);
+  background: rgba(79, 70, 229, 0.4);
 }
