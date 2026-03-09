@@ -123,6 +123,23 @@ export function useSubmitProject() {
   });
 }
 
+// ── Ping ───────────────────────────────────────────────────────────────────
+
+export function usePing() {
+  const { actor, isFetching } = useActor();
+  return useQuery<number | null>({
+    queryKey: ["ping"],
+    queryFn: async () => {
+      if (!actor) return null;
+      const t0 = performance.now();
+      await actor.getStats();
+      return Math.round(performance.now() - t0);
+    },
+    enabled: !!actor && !isFetching,
+    refetchInterval: 30000,
+  });
+}
+
 // ── Submit proposal ────────────────────────────────────────────────────────
 
 export function useSubmitProposal() {

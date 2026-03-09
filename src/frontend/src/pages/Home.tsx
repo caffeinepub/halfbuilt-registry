@@ -1,93 +1,106 @@
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { ProjectCard } from "../components/ProjectCard";
-import { useApprovedProjects, useStats } from "../hooks/useQueries";
+import { useCallback, useEffect, useRef } from "react";
+import { usePing, useStats } from "../hooks/useQueries";
 
 export function Home() {
   const { data: stats, isLoading: statsLoading } = useStats();
-  const {
-    data: projects,
-    isLoading: projectsLoading,
-    isError: projectsError,
-  } = useApprovedProjects();
+  const { data: ping } = usePing();
 
-  const scrollToFeed = () => {
-    document.getElementById("registry-feed")?.scrollIntoView({
-      behavior: "smooth",
+  const heroRef = useRef<HTMLElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const mousePos = useRef({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    mousePos.current = { x: e.clientX, y: e.clientY };
+    if (rafRef.current !== null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      if (!glowRef.current || !heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const x = mousePos.current.x - rect.left;
+      const y = mousePos.current.y - rect.top;
+      glowRef.current.style.transform = `translate(${x - 450}px, ${y - 450}px)`;
     });
-  };
+  }, []);
+
+  useEffect(() => {
+    const section = heroRef.current;
+    if (!section) return;
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [handleMouseMove]);
 
   return (
     <main>
-      {/* Hero Section */}
+      {/* ── Hero Section ─────────────────────────────────────────── */}
       <section
+        ref={heroRef}
         data-ocid="hero.section"
-        className="relative min-h-[calc(100vh-56px)] flex flex-col items-center justify-center px-4 sm:px-6 pt-16 pb-24 bg-grid-pattern overflow-hidden"
+        className="relative flex flex-col items-center justify-center px-4 sm:px-6 pb-24 pt-20 bg-[#050505] bg-grid-pattern overflow-hidden"
+        style={{ minHeight: "85vh" }}
       >
-        {/* Animated glow blob */}
+        {/* Cursor-following gradient */}
         <div
-          className="hero-glow-blob absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(99,102,241,0.18) 0%, rgba(99,102,241,0.05) 50%, transparent 70%)",
-            filter: "blur(40px)",
-          }}
+          ref={glowRef}
+          className="absolute top-0 left-0 pointer-events-none"
           aria-hidden="true"
+          style={{
+            width: "900px",
+            height: "900px",
+            background:
+              "radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            transition: "transform 0.15s ease-out",
+            willChange: "transform",
+          }}
         />
 
-        {/* Secondary subtle glow */}
-        <div
-          className="absolute top-1/4 right-1/4 w-[300px] h-[300px] rounded-full pointer-events-none opacity-30"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(99,102,241,0.1) 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-          aria-hidden="true"
-        />
-
+        {/* Content */}
         <div className="relative z-10 max-w-5xl mx-auto text-center">
-          {/* Status mark — stark, not soft */}
-          <motion.div
+          {/* Eyebrow */}
+          <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2.5 mb-10"
+            className="font-mono text-xs uppercase mb-6 text-[#9CA3AF]"
+            style={{ letterSpacing: "0.3em" }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse shrink-0" />
-            <span className="text-zinc-500 text-xs font-mono tracking-widest uppercase">
-              Registry&nbsp;&nbsp;/&nbsp;&nbsp;Open
-            </span>
-          </motion.div>
+            {"[ EST. 2026 // SECTOR 50 ]"}
+          </motion.p>
 
-          {/* Headline — two deliberate lines, weight contrast */}
+          {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.08 }}
-            className="text-[clamp(2.6rem,8vw,5.5rem)] font-bold leading-[1.05] tracking-[-0.03em] mb-7"
+            className="font-bold text-white leading-none mb-6"
+            style={{
+              fontSize: "clamp(2.5rem, 8vw, 82px)",
+              letterSpacing: "-0.04em",
+              textShadow:
+                "0 0 40px rgba(79,70,229,0.5), 0 0 80px rgba(79,70,229,0.25)",
+            }}
           >
-            <span className="block text-white">Your unfinished projects</span>
-            <span className="block text-indigo-400 italic font-bold">
-              deserve a second life.
-            </span>
+            HalfBuilt vs. The Internet.
           </motion.h1>
 
-          {/* Subheadline */}
+          {/* Sub-headline */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.18 }}
-            className="text-zinc-500 text-base md:text-lg leading-relaxed max-w-xl mx-auto mb-11 tracking-wide"
+            className="text-xl leading-[1.6] text-[#9CA3AF] max-w-[700px] text-center mx-auto mb-10"
           >
-            Liquidity for Logic.{" "}
-            <span className="text-zinc-400">
-              We turn the GitHub Graveyard into a library of foundations for
-              other builders.
-            </span>
+            The web is littered with unfinished genius. We&rsquo;re building a
+            clubhouse to save it. No ads. No corporate BS. Just code, soul, and
+            the brotherhood.
           </motion.p>
 
           {/* CTAs */}
@@ -97,22 +110,33 @@ export function Home() {
             transition={{ duration: 0.6, delay: 0.28 }}
             className="flex flex-col sm:flex-row gap-3 justify-center items-center"
           >
-            <Button
-              onClick={scrollToFeed}
-              className="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-semibold px-7 h-11 shadow-indigo-glow transition-all duration-200 gap-2 text-[13px] tracking-wide"
-            >
-              View Registry
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-            <Link to="/submit">
+            <Link to="/registry">
               <Button
-                variant="ghost"
-                className="text-zinc-400 hover:text-white hover:bg-white/[0.05] border border-white/[0.08] hover:border-white/[0.18] h-11 px-7 transition-all text-[13px] tracking-wide"
+                data-ocid="hero.primary_button"
+                className="bg-[#4F46E5] hover:bg-[#4338ca] text-white rounded-[4px] px-8 h-12 font-semibold text-sm tracking-wider transition-all duration-200 hover:animate-glow-pulse"
               >
-                List Your Project
+                EXPLORE THE REGISTRY
+              </Button>
+            </Link>
+            <Link to="/about">
+              <Button
+                data-ocid="hero.secondary_button"
+                variant="ghost"
+                className="border border-[#9CA3AF] text-[#9CA3AF] hover:border-white hover:text-white hover:bg-transparent bg-transparent rounded-[4px] px-8 h-12 font-semibold text-sm tracking-wider transition-all duration-200"
+              >
+                READ THE MANIFESTO
               </Button>
             </Link>
           </motion.div>
+        </div>
+
+        {/* Live Connection Status */}
+        <div
+          data-ocid="hero.status_panel"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-[#10B981] text-[12px] whitespace-nowrap"
+        >
+          {"status: FOUNDATIONS_LIVE // ping: "}
+          {ping !== undefined && ping !== null ? `${ping}ms` : "...ms"}
         </div>
       </section>
 
@@ -158,94 +182,6 @@ export function Home() {
           </div>
         </div>
       </div>
-
-      {/* Registry Feed */}
-      <section
-        id="registry-feed"
-        className="max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24"
-      >
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-indigo-400 text-xs font-medium uppercase tracking-widest mb-2">
-              Open Source Intelligence
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              The Registry
-            </h2>
-          </div>
-          {(projects?.length ?? 0) > 0 && (
-            <span className="text-zinc-600 text-sm font-mono">
-              {projects?.length} project{projects?.length !== 1 ? "s" : ""}
-            </span>
-          )}
-        </div>
-
-        {projectsLoading ? (
-          <div
-            data-ocid="feed.loading_state"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
-          >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5 space-y-3"
-              >
-                <Skeleton className="h-5 w-3/4 bg-white/[0.06]" />
-                <Skeleton className="h-4 w-full bg-white/[0.04]" />
-                <Skeleton className="h-4 w-5/6 bg-white/[0.04]" />
-                <div className="flex gap-2">
-                  <Skeleton className="h-5 w-16 bg-white/[0.04] rounded-full" />
-                  <Skeleton className="h-5 w-16 bg-white/[0.04] rounded-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : projectsError ? (
-          <div
-            data-ocid="feed.error_state"
-            className="text-center py-16 text-zinc-500"
-          >
-            <p className="text-sm">Failed to load projects. Please refresh.</p>
-          </div>
-        ) : (projects?.length ?? 0) === 0 ? (
-          <div data-ocid="feed.empty_state" className="flex justify-center">
-            <div className="max-w-md w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-8 text-center">
-              <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-indigo-400 text-lg">◈</span>
-              </div>
-              <h3 className="text-white font-semibold text-lg mb-2">
-                The Genesis Drop is coming.
-              </h3>
-              <p className="text-zinc-400 text-sm mb-1">
-                No projects are currently public.
-              </p>
-              <p className="text-zinc-500 text-sm mb-6">
-                Be among the first 100 builders to list a project.
-              </p>
-              <Link to="/submit">
-                <Button className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm h-9 px-5 gap-2">
-                  Submit Your Project
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {projects?.map((project, i) => (
-              <motion.div
-                key={String(project.id)}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="flex"
-              >
-                <ProjectCard project={project} index={i + 1} />
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </section>
 
       {/* Footer */}
       <Footer />

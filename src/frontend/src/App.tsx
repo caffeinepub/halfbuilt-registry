@@ -11,6 +11,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { About } from "./pages/About";
 import { Home } from "./pages/Home";
 import { ProjectView } from "./pages/ProjectView";
+import { Registry } from "./pages/Registry";
 import { Submit } from "./pages/Submit";
 
 // Root layout with shared Navbar
@@ -63,12 +64,19 @@ const aboutRoute = createRoute({
   component: About,
 });
 
+const registryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/registry",
+  component: Registry,
+});
+
 // Route tree
 const routeTree = rootRoute.addChildren([
   homeRoute,
   submitRoute,
   projectRoute,
   aboutRoute,
+  registryRoute,
 ]);
 
 // Router

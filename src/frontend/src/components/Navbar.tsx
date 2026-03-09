@@ -12,7 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import { ConnectModal } from "./ConnectModal";
 
 const navLinks = [
-  { label: "Registry", href: "/", ocid: "nav.link.1" },
+  { label: "Registry", href: "/registry", ocid: "nav.link.1" },
   { label: "Manifesto", href: "/about", ocid: "nav.link.2" },
   { label: "Guidelines", href: "/submit", ocid: "nav.link.3" },
   { label: "The Lab", href: "/lab", ocid: "nav.link.4" },
